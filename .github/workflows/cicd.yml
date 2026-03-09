@@ -7,12 +7,15 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: "us-west-2"
+  EKS_REGION: "us-east-1"
   EKS_CLUSTER_NAME: "k8s-training-cluster"
 
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,12 +64,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ env.EKS_REGION }}
 
       - name: Update kubeconfig for EKS
         run: |
           aws eks update-kubeconfig \
-            --region ${{ env.AWS_REGION }} \
+            --region ${{ env.EKS_REGION }} \
             --name ${{ env.EKS_CLUSTER_NAME }}
 
       - name: Deploy Client A
