@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: park-clustering-api
+  namespace: client-b
+  labels:
+    app: park-clustering-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: park-clustering-api
+  template:
+    metadata:
+      labels:
+        app: park-clustering-api
+    spec:
+      imagePullSecrets:
+        - name: registry-secrets-client-b
+      containers:
+        - name: park-clustering-api
+          image: ghcr.io/kd365/park-clustering-api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials-client-b
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials-client-b
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: ENDPOINT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: client-b-config
+                  key: ENDPOINT_NAME
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: client-b-config
+                  key: AWS_DEFAULT_REGION
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 10

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: client-c-quota
+  namespace: client-c
+spec:
+  hard:
+    requests.cpu: "1"
+    limits.cpu: "2"
+    requests.memory: 2Gi
+    limits.memory: 4Gi
+    pods: "5"

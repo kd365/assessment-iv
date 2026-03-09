@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-a-config
+  namespace: client-a
+data:
+  ENDPOINT_NAME: "credit-xgboost-endpoint"
+  AWS_DEFAULT_REGION: "us-west-2"
+  LOG_LEVEL: "INFO"
+  MODEL_TYPE: "xgboost"
+  TEAM_NAME: "client-a-financial-services"

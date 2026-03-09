@@ -1,0 +1,92 @@
+name: Build and Deploy to EKS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_REGION: "us-west-2"
+  EKS_CLUSTER_NAME: "k8s-training-cluster"
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Client A image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/client-a
+          push: true
+          tags: ghcr.io/kd365/credit-risk-api:latest
+
+      - name: Build and push Client B image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/client-b
+          push: true
+          tags: ghcr.io/kd365/park-clustering-api:latest
+
+      - name: Build and push Client C image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/client-c
+          push: true
+          tags: ghcr.io/kd365/legal-nlp-api:latest
+
+
+  deploy_to_eks:
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.EKS_CLUSTER_NAME }}
+
+      - name: Deploy Client A
+        run: kubectl apply -f k8s/client-a/
+
+      - name: Deploy Client B
+        run: kubectl apply -f k8s/client-b/
+
+      - name: Deploy Client C
+        run: kubectl apply -f k8s/client-c/
+
+      - name: Verify rollouts
+        run: |
+          kubectl rollout status deployment/credit-risk-api -n client-a --timeout=120s
+          kubectl rollout status deployment/park-clustering-api -n client-b --timeout=120s
+          kubectl rollout status deployment/legal-nlp-api -n client-c --timeout=120s
+
+      - name: Show deployment status
+        run: |
+          echo "=== All Pods ==="
+          kubectl get pods -A
+          echo "=== All Services ==="
+          kubectl get svc -A

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-b-config
+  namespace: client-b
+data:
+  ENDPOINT_NAME: "park-clustering-kmeans-endpoint"
+  AWS_DEFAULT_REGION: "us-west-2"
+  LOG_LEVEL: "INFO"
+  MODEL_TYPE: "kmeans"
+  TEAM_NAME: "client-b-outdoor-recreation"

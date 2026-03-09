@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-c-config
+  namespace: client-c
+data:
+  ENDPOINT_NAME: "legal-nlp-ner-endpoint"
+  AWS_DEFAULT_REGION: "us-west-2"
+  LOG_LEVEL: "INFO"
+  MODEL_TYPE: "huggingface-ner"
+  TEAM_NAME: "client-c-legal-tech"
