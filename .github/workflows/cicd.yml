@@ -82,10 +82,12 @@ jobs:
         run: kubectl apply -f k8s/client-c/
 
       - name: Verify rollouts
+        # Serverless SageMaker endpoints have cold starts; pods need extra time
+        # for readiness probes to pass on first deploy
         run: |
-          kubectl rollout status deployment/credit-risk-api -n client-a --timeout=120s
-          kubectl rollout status deployment/park-clustering-api -n client-b --timeout=120s
-          kubectl rollout status deployment/legal-nlp-api -n client-c --timeout=120s
+          kubectl rollout status deployment/credit-risk-api -n client-a --timeout=300s
+          kubectl rollout status deployment/park-clustering-api -n client-b --timeout=300s
+          kubectl rollout status deployment/legal-nlp-api -n client-c --timeout=300s
 
       - name: Show deployment status
         run: |
