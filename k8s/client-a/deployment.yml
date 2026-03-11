@@ -33,11 +33,31 @@ spec:
                 secretKeyRef:
                   name: aws-credentials-client-a
                   key: AWS_SECRET_ACCESS_KEY
-            - name: ENDPOINT_NAME
+            - name: ENDPOINT_NAME_V1
               valueFrom:
                 configMapKeyRef:
                   name: client-a-config
-                  key: ENDPOINT_NAME
+                  key: ENDPOINT_NAME_V1
+            - name: ENDPOINT_NAME_V2
+              valueFrom:
+                configMapKeyRef:
+                  name: client-a-config
+                  key: ENDPOINT_NAME_V2
+            - name: TRAFFIC_WEIGHT_V1
+              valueFrom:
+                configMapKeyRef:
+                  name: client-a-config
+                  key: TRAFFIC_WEIGHT_V1
+            - name: MODEL_VERSION_V1
+              valueFrom:
+                configMapKeyRef:
+                  name: client-a-config
+                  key: MODEL_VERSION_V1
+            - name: MODEL_VERSION_V2
+              valueFrom:
+                configMapKeyRef:
+                  name: client-a-config
+                  key: MODEL_VERSION_V2
             - name: AWS_DEFAULT_REGION
               valueFrom:
                 configMapKeyRef:

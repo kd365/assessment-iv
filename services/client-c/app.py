@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import boto3
 import json
@@ -8,6 +9,13 @@ from botocore.exceptions import ClientError
 
 
 app = FastAPI(title="SageMaker Legal NLP API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 ENDPOINT_NAME = os.environ.get('ENDPOINT_NAME', 'legal-nlp-ner-endpoint')
 REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-west-2')

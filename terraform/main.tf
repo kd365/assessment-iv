@@ -27,7 +27,11 @@ resource "kubernetes_config_map" "client_a" {
     namespace = kubernetes_namespace.client_a.metadata[0].name
   }
   data = {
-    ENDPOINT_NAME      = "credit-xgboost-endpoint"
+    ENDPOINT_NAME_V1   = var.client_a_endpoint_v1
+    ENDPOINT_NAME_V2   = var.client_a_endpoint_v2
+    TRAFFIC_WEIGHT_V1  = tostring(var.client_a_traffic_weight_v1)
+    MODEL_VERSION_V1   = "v1"
+    MODEL_VERSION_V2   = "v2"
     AWS_DEFAULT_REGION = "us-west-2"
     LOG_LEVEL          = "INFO"
     MODEL_TYPE         = "xgboost"

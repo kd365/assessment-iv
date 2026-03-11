@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh run watch 22879140148 --repo kd365/assessment-iv --exit-status)"
+    ]
+  }
+}
