@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: credit-risk-api-svc
   namespace: client-a
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 spec:
   selector:
     app: credit-risk-api

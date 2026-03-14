@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: park-clustering-api-svc
   namespace: client-b
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 spec:
   selector:
     app: park-clustering-api
